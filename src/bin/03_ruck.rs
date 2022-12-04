@@ -25,11 +25,18 @@ fn main() {
     let rucksack = data.split('\n').collect::<Vec<_>>();
     let duplicate_items = rucksack
         .iter()
-        .map(|sack| sack.split_at(sack.len() / 2))
+        .map(|sack| {
+            let sacks = sack.split_at(sack.len() / 2);
+            vec![sacks.0, sacks.1]
+        })
         .map(|sacks| {
-            let a = sacks.0.chars().collect::<HashSet<_>>();
-            let b = sacks.1.chars().collect::<HashSet<_>>();
-            a.intersection(&b).collect::<String>()
+            sacks
+                .iter()
+                .map(|i| i.chars().collect::<HashSet<_>>())
+                .reduce(|acc, set| acc.intersection(&set).cloned().collect())
+                .unwrap()
+                .iter()
+                .collect::<String>()
         })
         .collect::<String>();
 
@@ -42,14 +49,12 @@ fn main() {
         .iter()
         .array_chunks::<3>()
         .map(|group| {
-            group[0]
-                .chars()
-                .collect::<HashSet<_>>()
-                .intersection(&group[1].chars().collect::<HashSet<_>>())
-                .collect::<String>()
-                .chars()
-                .collect::<HashSet<_>>()
-                .intersection(&group[2].chars().collect::<HashSet<_>>())
+            group
+                .iter()
+                .map(|i| i.chars().collect::<HashSet<_>>())
+                .reduce(|acc, set| acc.intersection(&set).cloned().collect())
+                .unwrap()
+                .iter()
                 .collect::<String>()
         })
         .collect::<String>();
