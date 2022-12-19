@@ -87,6 +87,7 @@ fn main() {
 
     let y = 2000000;
     let count = (min_x..=max_x)
+        .into_par_iter()
         .filter(|x| {
             sensors
                 .iter()
@@ -97,7 +98,7 @@ fn main() {
         .count();
 
     let beacons_in_row = points
-        .iter()
+        .into_par_iter()
         .filter(|pair| pair[1].y == y)
         .map(|p| p[1])
         .collect::<HashSet<_>>();
